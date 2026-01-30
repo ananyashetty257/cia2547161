@@ -1,0 +1,138 @@
+import streamlit as st
+import pandas as pd
+import geopandas as gpd
+import matplotlib.pyplot as plt
+
+# -------------------------------
+# PAGE CONFIG
+# -------------------------------
+st.set_page_config(page_title="Silver Price Calculator & Dashboard", layout="wide")
+st.title("🥈 Silver Price Calculator & Silver Sales Analysis")
+
+# -------------------------------
+# LOAD DATASETS
+# -------------------------------
+price_df = pd.read_csv("historical_silver_price.csv")
+sales_df = pd.read_csv("state_wise_silver_purchased_kg.csv")
+
+# -------------------------------
+# 1️⃣ SILVER PRICE CALCULATOR
+# -------------------------------
+st.header("1️⃣ Silver Price Calculator")
+
+col1, col2, col3 = st.columns(3)
+
+with col1:
+    weight = st.number_input("Enter Silver Weight", min_value=0.0, step=1.0)
+    unit = st.selectbox("Unit", ["grams", "kilograms"])
+
+with col2:
+    price_per_gram = st.number_input("Price per gram (INR)", min_value=0.0)
+
+with col3:
+    currency = st.selectbox("Convert Currency", ["INR", "USD"])
+
+# Weight conversion
+weight_in_grams = weight * 1000 if unit == "kilograms" else weight
+total_cost_inr = weight_in_grams * price_per_gram
+
+USD_RATE = 83  # approximate
+
+if currency == "USD":
+    total_cost = total_cost_inr / USD_RATE
+    st.success(f"💰 Total Cost: ${total_cost:.2f} USD")
+else:
+    st.success(f"💰 Total Cost: ₹{total_cost_inr:.2f} INR")
+
+# -------------------------------
+# HISTORICAL SILVER PRICE CHART
+# -------------------------------
+st.subheader("📈 Historical Silver Price Analysis")
+
+price_filter = st.radio(
+    "Filter Price (INR per kg)",
+    ["≤ 20,000", "20,000 – 30,000", "≥ 30,000"]
+)
+
+if price_filter == "≤ 20,000":
+    filtered_price = price_df[price_df["Price_per_kg"] <= 20000]
+elif price_filter == "20,000 – 30,000":
+    filtered_price = price_df[
+        (price_df["Price_per_kg"] > 20000) &
+        (price_df["Price_per_kg"] < 30000)
+    ]
+else:
+    filtered_price = price_df[price_df["Price_per_kg"] >= 30000]
+
+st.line_chart(
+    filtered_price.set_index("Date")["Price_per_kg"]
+)
+
+# -------------------------------
+# 2️⃣ SILVER SALES DASHBOARD
+# -------------------------------
+st.header("2️⃣ Silver Sales Dashboard")
+
+# Load India map
+india_map = gpd.read_file("india_states.geojson")
+
+# Merge map with sales data
+map_df = india_map.merge(
+    sales_df,
+    left_on="ST_NM",
+    right_on="State"
+)
+
+# -------------------------------
+# STATE-WISE MAP
+# -------------------------------
+st.subheader("🗺️ State-wise Silver Purchases (kg)")
+
+fig, ax = plt.subplots(figsize=(10, 10))
+map_df.plot(
+    column="Silver_Purchased_kg",
+    cmap="Greys",
+    legend=True,
+    ax=ax
+)
+ax.set_title("State-wise Silver Consumption in India")
+ax.axis("off")
+st.pyplot(fig)
+
+# -------------------------------
+# TOP 5 STATES
+# -------------------------------
+st.subheader("🏆 Top 5 Silver Purchasing States")
+
+top5_states = sales_df.sort_values(
+    by="Silver_Purchased_kg",
+    ascending=False
+).head(5)
+
+st.bar_chart(
+    top5_states.set_index("State")["Silver_Purchased_kg"]
+)
+
+# -------------------------------
+# KARNATAKA MONTHLY ANALYSIS
+# -------------------------------
+st.subheader("📊 Karnataka Silver Purchase Trend")
+
+karnataka_df = sales_df[sales_df["State"] == "Karnataka"]
+
+st.line_chart(
+    karnataka_df.set_index("Month")["Silver_Purchased_kg"]
+)
+
+st.dataframe(karnataka_df)
+give easy code but give exact output make it look good
+1. Silver Price Calculator(5 Marks)
+Allow users to enter: Weight of silver (in grams or kilograms) and Current price of silver
+per gram. Calculate and display the total cost of silver based on the input values. Provide a
+currency conversion option (INR to USD or other currency).
+Additional Features: Display a historical silver price chart using the given dataset with
+filter options:
+
+○ ≤ 20,000 INR per kg
+○ Between 20,000 and 30,000 INR per kg
+○ ≥ 30,000 INR per kg

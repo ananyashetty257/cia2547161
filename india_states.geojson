@@ -1,0 +1,45 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "properties": { "ST_NM": "Karnataka" },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[74,12],[78,12],[78,18],[74,18],[74,12]]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": { "ST_NM": "Maharashtra" },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[72,16],[80,16],[80,22],[72,22],[72,16]]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": { "ST_NM": "Tamil Nadu" },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[77,8],[80,8],[80,13],[77,13],[77,8]]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": { "ST_NM": "Kerala" },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[75,8],[77,8],[77,13],[75,13],[75,8]]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": { "ST_NM": "Gujarat" },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[68,20],[74,20],[74,25],[68,25],[68,20]]]
+      }
+    }
+  ]
+}
